@@ -67,6 +67,14 @@ class QLearning(DecisionPolicy):
                 action = self.actions[random.randint(0, len(self.actions) - 1)]
             return action
 
+        def update_q(self, state, action, reward, next_state):
+            action_q_vals = self.sess.run(self.q, feed_dict={self.x: state})
+            next_action_q_vals = self.sess.run(self.q, feed_dict={self.x: next_state})
+            next_action_idx = np.argmax(next_action_q_vals)
+            action_q_vals[0, next_action_idx] = reward + self.gamma * next_action_q_vals[0, next_action_idx]
+            action_q_vals = np.squeeze(np.asarray(action_q_vals))
+            self.sess.run(self.train_op, feed_dict={self.x: state, self.y: action_q_vals})
+
 def run_simulation(policy, initial_budget, initial_entry_number_buy, initial_entry_number_sell, prices, hist, debug=False):
     budget = initial_budget
     num_of_entry_buy = initial_entry_number_buy
