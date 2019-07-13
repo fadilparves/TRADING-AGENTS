@@ -101,14 +101,14 @@ def run_simulation(policy, initial_budget, initial_entry_number_buy, initial_ent
                     pip_m = pip * 1
                     reward = reward + pip_m
                     current_portfolio = budget + pip_m
-                    print("BUY at " + str(buy_price) + " and last trade profit is " + str(pip_m))
+                    print("Day " + str(i) + " BUY at " + str(buy_price) + " and last trade profit is " + str(pip_m))
                 else:
                     #calculate the loss
                     pip = (buy_price - sell_price) * 1000
                     pip_m = pip * 1
                     reward = reward - pip_m
                     current_portfolio = budget - pip_m
-                    print("BUY at " + str(buy_price) + " and last trade loss is -" + str(pip_m))
+                    print("Day " + str(i) + " BUY at " + str(buy_price) + " and last trade loss is -" + str(pip_m))
 
                 num_of_entry_buy = 1
                 num_of_entry_sell = 0
@@ -120,13 +120,13 @@ def run_simulation(policy, initial_budget, initial_entry_number_buy, initial_ent
                     pip_m = pip * 1
                     reward = reward + pip_m
                     current_portfolio = budget + pip_m
-                    print("SELL at " + str(sell_price) + " and last trade ptofit is " + str(pip_m))
+                    print("Day " + str(i) + " SELL at " + str(sell_price) + " and last trade ptofit is " + str(pip_m))
                 else:
                     pip = (buy_price - sell_price) * 1000
                     pip_m = pip * 1
                     reward = reward - pip_m
                     current_portfolio = budget - pip_m
-                    print("SELL at " + str(sell_price) + " and last trade loss is -" + str(pip_m))
+                    print("Day " + str(i) + " SELL at " + str(sell_price) + " and last trade loss is -" + str(pip_m))
 
                 num_of_entry_buy = 0
                 num_of_entry_sell = 1
@@ -139,6 +139,24 @@ def run_simulation(policy, initial_budget, initial_entry_number_buy, initial_ent
 
     return current_portfolio
 
+def run_simulations(policy, initial_budget, initial_entry_number_buy, initial_entry_number_sell, prices, hist):
+    epochs = 100
+    final_rewards = list()
+    for i in range(epochs):
+        final_reward = run_simulation(policy, initial_budget, initial_entry_number_buy, initial_entry_number_sell, prices, hist)
+        final_rewards.append(final_reward)
+    
+    return final_rewards
 
+if __name__ == '__main__':
+    prices = data['close']
+    actions = ['Buy', 'Sell', 'Hold']
+    hist = 220
+    policy = QLearning(actions, hist + 2)
+    initial_budget = 100.0
+    initial_entry_number_buy = 0
+    initial_entry_number_sell = 0
+    all_rewards = run_simulations(policy, initial_budget, initial_entry_number_buy, initial_entry_number_sell, prices, hist)
+    print(all_rewards)
 
 
