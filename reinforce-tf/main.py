@@ -87,6 +87,8 @@ def run_simulation(policy, initial_budget, initial_entry_number_buy, initial_ent
     current_portfolio = 0
     reward = 0
     transitions = list()
+    buys = list()
+    sells = list()
     for i in range(len(prices)):
         current_state = np.asmatrix(np.hstack((prices.loc[i], budget, num_of_entry_buy, num_of_entry_sell)))
         action = policy.select_action(current_state, i)
@@ -110,6 +112,7 @@ def run_simulation(policy, initial_budget, initial_entry_number_buy, initial_ent
 
             num_of_entry_buy = 1
             num_of_entry_sell = 0
+            buys.append(buy_price)
 
         elif action == 'Sell':
             sell_price = prices.loc[i]
@@ -128,6 +131,7 @@ def run_simulation(policy, initial_budget, initial_entry_number_buy, initial_ent
 
             num_of_entry_buy = 0
             num_of_entry_sell = 1
+            sells.append(sell_price)
         
         else:
             action = 'Hold'
@@ -157,5 +161,16 @@ if __name__ == '__main__':
     initial_entry_number_sell = 0
     all_rewards = run_simulations(policy, initial_budget, initial_entry_number_buy, initial_entry_number_sell, prices, hist)
     print(all_rewards)
+    print(max(all_rewards))
+    print(min(all_rewards))
+
+    fig = plt.figure(figsize = (15, 5))
+    plt.plot(data['close'], color='r', lw=2.)
+    plt.plot(data['close'], '^', markersize=10, color='m', label = 'buying signal', markevery = buys)
+    plt.plot(data['close'], 'v', markersize=10, color='k', label = 'selling signal', markevery = sells)
+    plt.title(file_name.split("4")[0] + ' max reward %f, min reward %f%%'%(max(all_rewards), min(all_rewards)))
+    plt.legend()
+    plt.show()
+
 
 
