@@ -7,6 +7,8 @@ Below is the result
 
 ![alt text](https://github.com/xymerz1/trading_agents/blob/master/reinforce-tf/eurusd.png)
 
+**max profit is 9k usd and max loss is -6k usd**
+
 Requires more improvment such as avoiding news trades and add NLP for sentiment analysis
 
 To run this:
