@@ -112,7 +112,7 @@ def run_simulation(policy, initial_budget, initial_entry_number_buy, initial_ent
 
             num_of_entry_buy = 1
             num_of_entry_sell = 0
-            buys.append(buy_price)
+            buys.append(i)
 
         elif action == 'Sell':
             sell_price = prices.loc[i]
@@ -131,7 +131,7 @@ def run_simulation(policy, initial_budget, initial_entry_number_buy, initial_ent
 
             num_of_entry_buy = 0
             num_of_entry_sell = 1
-            sells.append(sell_price)
+            sells.append(i)
         
         else:
             action = 'Hold'
@@ -139,17 +139,21 @@ def run_simulation(policy, initial_budget, initial_entry_number_buy, initial_ent
             transitions.append((current_state, action, reward, next_state))
             policy.update_q(current_state, action, reward, next_state)
 
-    return reward
+    return reward, buys, sells
 
 def run_simulations(policy, initial_budget, initial_entry_number_buy, initial_entry_number_sell, prices, hist):
     epochs = 100
     final_rewards = list()
+    buys = list()
+    sells = list()
     for i in range(epochs):
         print(i)
-        final_reward = run_simulation(policy, initial_budget, initial_entry_number_buy, initial_entry_number_sell, prices, hist)
+        final_reward, buy, sell = run_simulation(policy, initial_budget, initial_entry_number_buy, initial_entry_number_sell, prices, hist)
         final_rewards.append(final_reward)
+        buys.append(buy)
+        sells.append(sell)
     
-    return final_rewards
+    return final_rewards, buys, sells
 
 if __name__ == '__main__':
     prices = data['close']
@@ -159,15 +163,18 @@ if __name__ == '__main__':
     initial_budget = 100.0
     initial_entry_number_buy = 0
     initial_entry_number_sell = 0
-    all_rewards = run_simulations(policy, initial_budget, initial_entry_number_buy, initial_entry_number_sell, prices, hist)
+    all_rewards, buys, sells = run_simulations(policy, initial_budget, initial_entry_number_buy, initial_entry_number_sell, prices, hist)
     print(all_rewards)
     print(max(all_rewards))
     print(min(all_rewards))
+    iMax = all_rewards.index(max(all_rewards))
+    buySignal = buys[iMax]
+    sellSignal = sells[iMax]
 
     fig = plt.figure(figsize = (15, 5))
     plt.plot(data['close'], color='r', lw=2.)
-    plt.plot(data['close'], '^', markersize=10, color='m', label = 'buying signal', markevery = buys)
-    plt.plot(data['close'], 'v', markersize=10, color='k', label = 'selling signal', markevery = sells)
+    plt.plot(data['close'], '^', markersize=10, color='m', label = 'buying signal', markevery = buySignal)
+    plt.plot(data['close'], 'v', markersize=10, color='k', label = 'selling signal', markevery = sellSignal)
     plt.title(file_name.split("4")[0] + ' max reward %f, min reward %f%%'%(max(all_rewards), min(all_rewards)))
     plt.legend()
     plt.show()
