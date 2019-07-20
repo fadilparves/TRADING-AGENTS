@@ -17,3 +17,4 @@ To run this:
 * run `python3 main.py` to run the code and get the output
 
 ## This is still in development phase, use on your own risk!
+# Todo: Use Evolution Strategy 
