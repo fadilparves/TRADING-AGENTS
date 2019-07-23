@@ -3,7 +3,7 @@
 # reinforcement with QLearning
 The first idea is to use QLearning to trade on single pair EURUSD
 
-Below is the result
+Below is the result (not bad uh?)
 
 ![alt text](https://github.com/xymerz1/trading_agents/blob/master/reinforce-tf/eurusd.png)
 
